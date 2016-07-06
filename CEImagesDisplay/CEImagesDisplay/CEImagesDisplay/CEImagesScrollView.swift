@@ -39,6 +39,7 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         self.backgroundColor = UIColor.grayColor()
         self.contentSize = CGSizeMake(3 * self.width, self.height)
         self.pagingEnabled = true
+        self.contentOffset.x = self.width
     }
     
     private func initImagesNameArray() {
