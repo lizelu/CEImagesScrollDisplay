@@ -26,6 +26,14 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
     var imagesNameArray: Array<String> = []
     var currentPage: Int = 0
     var buttonContentView: UIView!
+    var direction:CGFloat = 1
+    var position: Int = 0
+    
+    
+    
+    
+    
+    let source: dispatch_source_t = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
     
     
 
@@ -35,6 +43,7 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         self.configScrollView()
         self.initButtonContentView()
         self.initButtons()
+        self.addDispatchSourceTimer()
     }
     
     private func configScrollView() {
@@ -125,14 +134,42 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
     }
     
     
-
-   
+    private func addDispatchSourceTimer() {
+        dispatch_source_set_timer(source, DISPATCH_TIME_NOW, UInt64(3 * NSEC_PER_SEC), 0)
+        dispatch_source_set_event_handler(source) {
+            UIView.animateWithDuration(0.7, animations: { 
+                
+            })
+            UIView.animateWithDuration(0.7, animations: {
+                self.contentOffset.x = self.contentOffset.x + (self.width * self.direction)  - 1
+            }, completion: { (result) in
+                if result {
+                    self.contentOffset.x += 1
+                }
+            })
+        }
+        dispatch_resume(source)
+    }
+    
+    //MARK -- UIScrollViewDelegate
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        let temp = scrollView.contentOffset.x / self.width
+        self.moveImageView(scrollView.contentOffset.x)
+    }
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if scrollView.contentOffset.x - self.width > 0 {
+            direction = 1
+        } else {
+            direction = -1
+        }
+    }
+    
+    func moveImageView(offsetX: CGFloat) {
+        let temp = offsetX / self.width
         
         if temp == 0 || temp == 1 || temp == 2 {
-            let direction: Int = Int(temp) - 1
-            self.currentPage = getCurrentImageIndex(self.currentPage + direction)
+            position = Int(temp) - 1
+            self.currentPage = getCurrentImageIndex(self.currentPage + position)
             self.setButtonSameImage(self.currentPage)
             self.contentOffset.x = self.width
             self.setButtonImage(self.currentPage)
