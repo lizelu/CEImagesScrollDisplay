@@ -22,15 +22,17 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         }
     }
     
-    var buttonsArray: Array<UIButton> = []
+    var buttonsArray: Array<CEImageViewButton> = []
     var imagesNameArray: Array<String> = []
-    var currentPage: UInt = 0
+    var currentPage: Int = 0
+    var buttonContentView: UIView!
     
     
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.configScrollView()
+        self.initButtonContentView()
         self.initImagesNameArray()
         self.initButtons()
     }
@@ -49,18 +51,70 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         }
     }
     
+    private func initButtonContentView() {
+        let frame = CGRectMake(0, 0, self.width * 3, self.height)
+        self.buttonContentView = UIView(frame: frame)
+        self.addSubview(self.buttonContentView)
+    }
+    
     private func initButtons() {
         
         for i in 0..<3 {
             let tempButton: CEImageViewButton = CEImageViewButton.init(frame: getButtonFrameWithIndex(i))
-            tempButton.buttonImageView.image = UIImage.init(named: self.imagesNameArray[i])
+            tempButton.tag = i
+            self.buttonContentView.addSubview(tempButton)
+            self.buttonsArray.append(tempButton)
             
-            self.addSubview(tempButton)
             tempButton.setButtonTouchUpInsideClosure({ (sender) in
                 print(sender.tag)
             })
-
         }
+        
+        self.setButtonImage(self.currentPage)
+    }
+    
+    private func setButtonImage(currentPage: Int) {
+        
+        let imageIndexArray = [getBeforeImageIndex(currentPage),
+                               getCurrentImageIndex(currentPage),
+                               getLastImageIndex(currentPage)]
+        
+        for i in 0..<self.buttonsArray.count {
+            let tempButton = self.buttonsArray[i]
+            let imageName = self.imagesNameArray[imageIndexArray[i]]
+            tempButton.buttonImageView.image = UIImage.init(named: imageName)
+        }
+    }
+    
+    
+    /**
+     将所有Button的ImageView都设置成当前显示图片，便于移动
+     
+     - parameter currentPage: 当前page
+     */
+    private func setButtonSameImage(currentPage: Int) {
+        for i in 0..<self.buttonsArray.count {
+            let tempButton = self.buttonsArray[i]
+            let currentImageName = self.imagesNameArray[getCurrentImageIndex(currentPage)]
+            tempButton.buttonImageView.image = UIImage.init(named: currentImageName)
+        }
+    }
+    
+    
+    //获取相应按钮上图片的索引
+    private func getCurrentImageIndex(currentPage: Int) -> Int {
+        let tempCurrentPage = currentPage % self.imagesNameArray.count
+        return tempCurrentPage < 0 ? self.imagesNameArray.count - 1 : tempCurrentPage
+    }
+    
+    private func getBeforeImageIndex(currentPage: Int) -> Int {
+        let beforeNumber = getCurrentImageIndex(currentPage) - 1
+        return beforeNumber < 0 ? self.imagesNameArray.count - 1 : beforeNumber
+    }
+    
+    private func getLastImageIndex(currentPage: Int) -> Int {
+        let lastNumber = getCurrentImageIndex(currentPage) + 1
+        return lastNumber >= self.imagesNameArray.count ? 0 : lastNumber
     }
     
     
@@ -68,9 +122,34 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         return CGRectMake(CGFloat(index) * self.width, 0, self.width, self.height)
     }
     
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        print("scrollViewDidEndDecelerating")
+//    
+//    func scrollViewDidScroll(scrollView: UIScrollView) {
+//        if scrollView.contentOffset.x == 0 || scrollView.contentOffset.x >= self.width * 2 {
+//            scrollView.scrollEnabled = false
+//        } else {
+//            scrollView.scrollEnabled = true
+//        }
+//    }
+    
+    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+       
+        let direction = Int(scrollView.contentOffset.x / self.width) // -1=left, 0=center, 1=left
+        print(direction)
+//        self.currentPage = getCurrentImageIndex(self.currentPage + direction)
+//        self.setButtonSameImage(self.currentPage)
+//        self.contentOffset.x = self.width
+//        self.setButtonImage(self.currentPage)
     }
+    
+//    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+//        print("move")
+//        let direction = Int(scrollView.contentOffset.x / self.width) - 1 // -1=left, 0=center, 1=left
+//        self.currentPage = getCurrentImageIndex(self.currentPage + direction)
+//        self.setButtonSameImage(self.currentPage)
+//        self.contentOffset.x = self.width
+//        self.setButtonImage(self.currentPage)
+//        scrollView.scrollEnabled = true
+//    }
     
     
     required init?(coder aDecoder: NSCoder) {
