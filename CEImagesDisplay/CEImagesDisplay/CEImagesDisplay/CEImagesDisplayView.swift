@@ -34,6 +34,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     private var duration: Float = 5
     
     private var pageControl: UIPageControl!
+    private var pageControlHeight: CGFloat = 50
     private var scrollView: UIScrollView!
     
     
@@ -45,7 +46,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         self.initButtons()
         self.initPageControl()
         self.addDispatchSourceTimer()
-        
     }
     
     
@@ -76,7 +76,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     }
     
     private func initButtons() {
-        
         for i in 0..<3 {
             let tempButton: CEImageViewButton = CEImageViewButton.init(frame: getButtonFrameWithIndex(i))
             tempButton.tag = i
@@ -90,10 +89,10 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     }
     
     private func initPageControl() {
-        self.pageControl = UIPageControl(frame: CGRectMake(0, self.height - 50, self.width, 50))
+        self.pageControl = UIPageControl(frame: CGRectMake(0, self.height - pageControlHeight, self.width, pageControlHeight))
         self.addSubview(self.pageControl)
-        self.pageControl.pageIndicatorTintColor = UIColor.blackColor()
-        self.pageControl.tintColor = UIColor.grayColor()
+        self.pageControl.pageIndicatorTintColor = UIColor.whiteColor()
+        self.pageControl.currentPageIndicatorTintColor = UIColor.blackColor()
     }
     
     private func setButtonImage(currentPage: Int) {
@@ -143,14 +142,12 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         return lastNumber >= self.imagesNameArray.count ? 0 : lastNumber
     }
     
-    
     private func getButtonFrameWithIndex(index: Int) -> CGRect{
         return CGRectMake(CGFloat(index) * self.width, 0, self.width, self.height)
     }
     
     
     private func addDispatchSourceTimer() {
-        
         let timer = UInt64(duration) * NSEC_PER_SEC
         dispatch_source_set_timer(source, dispatch_time(DISPATCH_TIME_NOW,  Int64(timer)), timer, 0)
         dispatch_source_set_event_handler(source) {
