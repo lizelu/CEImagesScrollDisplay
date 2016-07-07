@@ -24,6 +24,7 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
     
     var buttonsArray: Array<UIButton> = []
     var imagesNameArray: Array<String> = []
+    var currentPage: UInt = 0
     
     
 
@@ -51,35 +52,20 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
     private func initButtons() {
         
         for i in 0..<3 {
+            let tempButton: CEImageViewButton = CEImageViewButton.init(frame: getButtonFrameWithIndex(i))
+            tempButton.buttonImageView.image = UIImage.init(named: self.imagesNameArray[i])
             
-            let imageView = UIImageView.init(frame: CGRectMake(0, 0, self.width, self.height))
-            imageView.contentMode = .ScaleAspectFill
-            imageView.image = UIImage.init(named: self.imagesNameArray[i])
-            
-            let tempButton: UIButton = UIButton.init(frame: getButtonFrameWithIndex(i))
-            tempButton.addTarget(self, action: #selector(tapButton), forControlEvents: .TouchUpInside)
-            
-            tempButton.tag = i
-            tempButton.clipsToBounds = true
-            tempButton.addSubview(imageView)
             self.addSubview(tempButton)
+            tempButton.setButtonTouchUpInsideClosure({ (sender) in
+                print(sender.tag)
+            })
+
         }
     }
     
-//    private func moveButtons() {
-//        for i in 0..<self.buttonsArray.count {
-//            let button: UIButton = self.buttonsArray[i]
-//            
-//            
-//        }
-//    }
     
     private func getButtonFrameWithIndex(index: Int) -> CGRect{
         return CGRectMake(CGFloat(index) * self.width, 0, self.width, self.height)
-    }
-    
-    @objc private func tapButton(sender: UIButton) {
-        print("点击按钮\(sender.tag)")
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {

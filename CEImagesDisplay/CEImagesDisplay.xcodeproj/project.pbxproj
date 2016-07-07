@@ -23,6 +23,7 @@
 		F4EEE2CD1D2D0D2600ABFE51 /* 008.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F4EEE2C21D2D0D2600ABFE51 /* 008.jpg */; };
 		F4EEE2CE1D2D0D2600ABFE51 /* 009.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F4EEE2C31D2D0D2600ABFE51 /* 009.jpg */; };
 		F4EEE2D21D2D150C00ABFE51 /* CEImagesScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2D11D2D150C00ABFE51 /* CEImagesScrollView.swift */; };
+		F4EEE2D41D2DE56100ABFE51 /* CEImageViewButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2D31D2DE56100ABFE51 /* CEImageViewButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		F4EEE2C21D2D0D2600ABFE51 /* 008.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 008.jpg; sourceTree = "<group>"; };
 		F4EEE2C31D2D0D2600ABFE51 /* 009.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 009.jpg; sourceTree = "<group>"; };
 		F4EEE2D11D2D150C00ABFE51 /* CEImagesScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEImagesScrollView.swift; sourceTree = "<group>"; };
+		F4EEE2D31D2DE56100ABFE51 /* CEImageViewButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEImageViewButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				F4EEE2D11D2D150C00ABFE51 /* CEImagesScrollView.swift */,
+				F4EEE2D31D2DE56100ABFE51 /* CEImageViewButton.swift */,
 			);
 			path = CEImagesDisplay;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4EEE2D41D2DE56100ABFE51 /* CEImageViewButton.swift in Sources */,
 				F4EEE2A51D2D08D800ABFE51 /* ViewController.swift in Sources */,
 				F4EEE2D21D2D150C00ABFE51 /* CEImagesScrollView.swift in Sources */,
 				F4EEE2A31D2D08D800ABFE51 /* AppDelegate.swift in Sources */,
