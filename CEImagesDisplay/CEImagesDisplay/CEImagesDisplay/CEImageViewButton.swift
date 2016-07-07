@@ -37,7 +37,6 @@ class CEImageViewButton: UIButton {
     }
     
     @objc private func tapButton(sender: UIButton) {
-        print("点击按钮\(sender.tag)")
         if self.touchUpInsideClosure != nil {
             self.touchUpInsideClosure(sender)
         }

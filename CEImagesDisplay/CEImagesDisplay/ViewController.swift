@@ -15,8 +15,25 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.automaticallyAdjustsScrollViewInsets = false
-        let imageScrollView: CEImagesScrollView = CEImagesScrollView.init(frame: CGRectMake(0, 100, self.screenWidth, 300))
+        self.addImageDisplayView()
+    }
+    
+    func addImageDisplayView() {
+        let imageScrollView: CEImagesDisplayView = CEImagesDisplayView.init(frame: CGRectMake(0, 100, self.screenWidth, 300))
         self.view.addSubview(imageScrollView)
+        
+        imageScrollView.setImages(initImagesNameArray())
+        imageScrollView.setButtonTouchUpInsideClosure { (index) in
+            print("图片\(index)")
+        }
+    }
+    
+    func initImagesNameArray() -> Array<String>{
+        var imagesNameArray: Array<String> = []
+        for i in 0..<10 {
+            imagesNameArray.append("00\(i).jpg")
+        }
+        return imagesNameArray
     }
 
     override func didReceiveMemoryWarning() {

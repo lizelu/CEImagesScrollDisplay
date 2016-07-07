@@ -8,64 +8,71 @@
 
 import UIKit
 
-class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
+typealias ButtonTouchUpInsideClosureTag = (Int) -> Void
+
+class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     
-    var width: CGFloat {
+    private var width: CGFloat {
         get {
             return self.frame.size.width
         }
     }
     
-    var height: CGFloat {
+    private var height: CGFloat {
         get {
             return self.frame.size.height
         }
     }
     
-    var buttonsArray: Array<CEImageViewButton> = []
-    var imagesNameArray: Array<String> = []
-    var currentPage: Int = 0
-    var buttonContentView: UIView!
-    var direction:CGFloat = 1
-    var position: Int = 0
+    private var imagesNameArray: Array<String> = []
+    private var buttonsArray: Array<CEImageViewButton> = []
+    private var currentPage: Int = 0
+    private var direction:CGFloat = 1
+    private var position: Int = 0
+    private var isSourceActive: Bool = false
+    private var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!
+    private var duration: Float = 5
     
-    
-    
+    private var pageControl: UIPageControl!
+    private var scrollView: UIScrollView!
     
     
     let source: dispatch_source_t = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
     
-    
-
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.initImagesNameArray()
         self.configScrollView()
-        self.initButtonContentView()
         self.initButtons()
+        self.initPageControl()
         self.addDispatchSourceTimer()
-    }
-    
-    private func configScrollView() {
-        self.bounces = false
-        self.delegate = self
-        self.backgroundColor = UIColor.grayColor()
-        self.contentSize = CGSizeMake(3 * self.width, self.height)
-        self.pagingEnabled = true
-        self.contentOffset.x = self.width
+        
     }
     
     
-    private func initImagesNameArray() {
-        for i in 0...9 {
-            self.imagesNameArray.append("00\(i).jpg")
+    func setButtonTouchUpInsideClosure(closure: ButtonTouchUpInsideClosureTag) {
+        self.touchUpInsideClosure = closure
+    }
+    
+    func setImages(imagesNameArray: Array<String>) {
+        self.imagesNameArray = imagesNameArray
+        if imagesNameArray.count > 0 {
+            self.setButtonImage(self.currentPage)
+            self.pageControl.numberOfPages = imagesNameArray.count
+            self.currentPage = 0;
         }
     }
     
-    private func initButtonContentView() {
-        let frame = CGRectMake(0, 0, self.width * 3, self.height)
-        self.buttonContentView = UIView(frame: frame)
-        self.addSubview(self.buttonContentView)
+    private func configScrollView() {
+        self.scrollView = UIScrollView.init(frame: CGRectMake(0, 0, self.width, self.height))
+        self.scrollView.bounces = false
+        self.scrollView.delegate = self
+        self.scrollView.showsVerticalScrollIndicator = false
+        self.scrollView.showsHorizontalScrollIndicator = false
+        self.scrollView.backgroundColor = UIColor.grayColor()
+        self.scrollView.contentSize = CGSizeMake(3 * self.width, self.height)
+        self.scrollView.pagingEnabled = true
+        self.scrollView.contentOffset.x = self.width
+        self.addSubview(self.scrollView)
     }
     
     private func initButtons() {
@@ -73,15 +80,20 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         for i in 0..<3 {
             let tempButton: CEImageViewButton = CEImageViewButton.init(frame: getButtonFrameWithIndex(i))
             tempButton.tag = i
-            self.buttonContentView.addSubview(tempButton)
+            self.scrollView.addSubview(tempButton)
             self.buttonsArray.append(tempButton)
             
             tempButton.setButtonTouchUpInsideClosure({ (sender) in
-                print(self.currentPage)
+                self.touchUpInsideClosure(self.currentPage)
             })
         }
-        
-        self.setButtonImage(self.currentPage)
+    }
+    
+    private func initPageControl() {
+        self.pageControl = UIPageControl(frame: CGRectMake(0, self.height - 50, self.width, 50))
+        self.addSubview(self.pageControl)
+        self.pageControl.pageIndicatorTintColor = UIColor.blackColor()
+        self.pageControl.tintColor = UIColor.grayColor()
     }
     
     private func setButtonImage(currentPage: Int) {
@@ -114,8 +126,11 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
     
     //获取相应按钮上图片的索引
     private func getCurrentImageIndex(currentPage: Int) -> Int {
-        let tempCurrentPage = currentPage % self.imagesNameArray.count
-        return tempCurrentPage < 0 ? self.imagesNameArray.count - 1 : tempCurrentPage
+        if self.imagesNameArray.count > 0 {
+            let tempCurrentPage = currentPage % self.imagesNameArray.count
+            return tempCurrentPage < 0 ? self.imagesNameArray.count - 1 : tempCurrentPage
+        }
+        return 0
     }
     
     private func getBeforeImageIndex(currentPage: Int) -> Int {
@@ -135,26 +150,29 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
     
     
     private func addDispatchSourceTimer() {
-        dispatch_source_set_timer(source, DISPATCH_TIME_NOW, UInt64(3 * NSEC_PER_SEC), 0)
+        
+        let timer = UInt64(duration) * NSEC_PER_SEC
+        dispatch_source_set_timer(source, dispatch_time(DISPATCH_TIME_NOW,  Int64(timer)), timer, 0)
         dispatch_source_set_event_handler(source) {
-            UIView.animateWithDuration(0.7, animations: { 
-                
-            })
-            UIView.animateWithDuration(0.7, animations: {
-                self.contentOffset.x = self.contentOffset.x + (self.width * self.direction)  - 1
+    
+            UIView.animateWithDuration(0.3, animations: {
+                self.scrollView.contentOffset.x = self.scrollView.contentOffset.x + (self.width * self.direction)  - 1
             }, completion: { (result) in
                 if result {
-                    self.contentOffset.x += 1
+                    self.scrollView.contentOffset.x += 1
                 }
             })
         }
         dispatch_resume(source)
+        self.isSourceActive = true
     }
     
     //MARK -- UIScrollViewDelegate
     func scrollViewDidScroll(scrollView: UIScrollView) {
         self.moveImageView(scrollView.contentOffset.x)
     }
+    
+    
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.contentOffset.x - self.width > 0 {
@@ -164,6 +182,23 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
         }
     }
     
+    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+        if self.isSourceActive {
+            dispatch_suspend(source)
+            self.isSourceActive = false
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+
+        if !self.isSourceActive && dispatch_source_get_handle(source) != 0 {
+            dispatch_resume(source)
+            self.isSourceActive = true
+        }
+    }
+    
+    
+    
     func moveImageView(offsetX: CGFloat) {
         let temp = offsetX / self.width
         
@@ -171,11 +206,12 @@ class CEImagesScrollView: UIScrollView, UIScrollViewDelegate {
             position = Int(temp) - 1
             self.currentPage = getCurrentImageIndex(self.currentPage + position)
             self.setButtonSameImage(self.currentPage)
-            self.contentOffset.x = self.width
+            self.scrollView.contentOffset.x = self.width
             self.setButtonImage(self.currentPage)
+            self.pageControl?.currentPage = self.currentPage
         }
+
     }
-    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
