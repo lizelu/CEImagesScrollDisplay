@@ -130,20 +130,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     
     
     /**
-     将所有Button的ImageView都设置成当前显示图片，便于移动
-     
-     - parameter currentPage: 当前page
-     */
-    private func setButtonSameImage(currentPage: Int) {
-        for i in 0..<self.buttonsArray.count {
-            let tempButton = self.buttonsArray[i]
-            let currentImageName = self.imagesNameArray[getCurrentImageIndex(currentPage)]
-            tempButton.buttonImageView.image = UIImage.init(named: currentImageName)
-        }
-    }
-    
-    
-    /**
      获取当前显示图片索引
      
      - parameter currentPage: 当前页数
@@ -224,7 +210,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - parameter scrollView:
      */
-    func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         if self.isSourceActive {
             dispatch_suspend(source)
             self.isSourceActive = false
@@ -255,7 +241,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         if temp == 0 || temp == 1 || temp == 2 {
             let position: Int = Int(temp) - 1
             self.currentPage = getCurrentImageIndex(self.currentPage + position)
-            self.setButtonSameImage(self.currentPage)
             self.scrollView.contentOffset.x = self.width
             self.setButtonImage(self.currentPage)
             self.pageControl?.currentPage = self.currentPage
