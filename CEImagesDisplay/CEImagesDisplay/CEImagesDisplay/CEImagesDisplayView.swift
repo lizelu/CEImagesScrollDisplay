@@ -24,19 +24,17 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
-    private var imagesNameArray: Array<String> = []
-    private var buttonsArray: Array<CEImageViewButton> = []
-    private var currentPage: Int = 0
-    private var direction:CGFloat = 1
-    private var position: Int = 0
-    private var isSourceActive: Bool = false
-    private var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!
-    private var duration: Float = 5
+    private var imagesNameArray: Array<String> = []             //图片数组
+    private var buttonsArray: Array<CEImageViewButton> = []     //存储三个按钮
+    private var currentPage: Int = 0                            //当前页数
+    private var direction:CGFloat = 1                           //运动方向，1 <==> right, -1 <==> left
+    private var isSourceActive: Bool = false                    //定时器是否有效
+    private var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!    //按钮点击事件回调
+    private var duration: Float = 5                             //运动时间间隔
     
     private var pageControl: UIPageControl!
     private var pageControlHeight: CGFloat = 50
     private var scrollView: UIScrollView!
-    
     
     let source: dispatch_source_t = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
     
@@ -95,6 +93,28 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         self.pageControl.currentPageIndicatorTintColor = UIColor.blackColor()
     }
     
+    private func addDispatchSourceTimer() {
+        let timer = UInt64(duration) * NSEC_PER_SEC
+        dispatch_source_set_timer(source, dispatch_time(DISPATCH_TIME_NOW,  Int64(timer)), timer, 0)
+        dispatch_source_set_event_handler(source) {
+            
+            UIView.animateWithDuration(0.3, animations: {
+                self.scrollView.contentOffset.x = self.scrollView.contentOffset.x + (self.width * self.direction)  - 1
+                }, completion: { (result) in
+                    if result {
+                        self.scrollView.contentOffset.x += 1
+                    }
+            })
+        }
+        dispatch_resume(source)
+        self.isSourceActive = true
+    }
+
+    /**
+     设置按钮上应显示的图片
+     
+     - parameter currentPage: 当前页数
+     */
     private func setButtonImage(currentPage: Int) {
         
         let imageIndexArray = [getBeforeImageIndex(currentPage),
@@ -123,7 +143,13 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     }
     
     
-    //获取相应按钮上图片的索引
+    /**
+     获取当前显示图片索引
+     
+     - parameter currentPage: 当前页数
+     
+     - returns:
+     */
     private func getCurrentImageIndex(currentPage: Int) -> Int {
         if self.imagesNameArray.count > 0 {
             let tempCurrentPage = currentPage % self.imagesNameArray.count
@@ -132,45 +158,59 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         return 0
     }
     
+    /**
+     获取当前显示图片的上一张图片的索引
+     
+     - parameter currentPage:
+     
+     - returns:
+     */
     private func getBeforeImageIndex(currentPage: Int) -> Int {
         let beforeNumber = getCurrentImageIndex(currentPage) - 1
         return beforeNumber < 0 ? self.imagesNameArray.count - 1 : beforeNumber
     }
     
+    /**
+     获取当前图片显示的下一张图片的索引
+     
+     - parameter currentPage:
+     
+     - returns:
+     */
     private func getLastImageIndex(currentPage: Int) -> Int {
         let lastNumber = getCurrentImageIndex(currentPage) + 1
         return lastNumber >= self.imagesNameArray.count ? 0 : lastNumber
     }
     
+    /**
+     获取每个按钮的Frame
+     
+     - parameter index:
+     
+     - returns:
+     */
     private func getButtonFrameWithIndex(index: Int) -> CGRect{
         return CGRectMake(CGFloat(index) * self.width, 0, self.width, self.height)
     }
     
     
-    private func addDispatchSourceTimer() {
-        let timer = UInt64(duration) * NSEC_PER_SEC
-        dispatch_source_set_timer(source, dispatch_time(DISPATCH_TIME_NOW,  Int64(timer)), timer, 0)
-        dispatch_source_set_event_handler(source) {
-    
-            UIView.animateWithDuration(0.3, animations: {
-                self.scrollView.contentOffset.x = self.scrollView.contentOffset.x + (self.width * self.direction)  - 1
-            }, completion: { (result) in
-                if result {
-                    self.scrollView.contentOffset.x += 1
-                }
-            })
-        }
-        dispatch_resume(source)
-        self.isSourceActive = true
-    }
     
     //MARK -- UIScrollViewDelegate
+    /**
+     移动Button到合适的位置
+     
+     - parameter scrollView:
+     */
     func scrollViewDidScroll(scrollView: UIScrollView) {
         self.moveImageView(scrollView.contentOffset.x)
     }
     
-    
-    
+    /**
+     记录用户拖动方向
+     
+     - parameter scrollView:
+     - parameter decelerate:
+     */
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.contentOffset.x - self.width > 0 {
             direction = 1
@@ -179,6 +219,11 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
+    /**
+     开始拖动时，挂起定时器
+     
+     - parameter scrollView:
+     */
     func scrollViewWillBeginDecelerating(scrollView: UIScrollView) {
         if self.isSourceActive {
             dispatch_suspend(source)
@@ -186,6 +231,11 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
+    /**
+     拖动结束时，唤醒定时器
+     
+     - parameter scrollView:
+     */
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
 
         if !self.isSourceActive && dispatch_source_get_handle(source) != 0 {
@@ -194,13 +244,16 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
-    
-    
+    /**
+     移动Button到合适的位置
+     
+     - parameter offsetX:
+     */
     func moveImageView(offsetX: CGFloat) {
         let temp = offsetX / self.width
         
         if temp == 0 || temp == 1 || temp == 2 {
-            position = Int(temp) - 1
+            let position: Int = Int(temp) - 1
             self.currentPage = getCurrentImageIndex(self.currentPage + position)
             self.setButtonSameImage(self.currentPage)
             self.scrollView.contentOffset.x = self.width
