@@ -14,7 +14,8 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let imageScrollView: CEImagesScrollView = CEImagesScrollView.init(frame: CGRectMake(0, 0, self.screenWidth, 300))
+        self.automaticallyAdjustsScrollViewInsets = false
+        let imageScrollView: CEImagesScrollView = CEImagesScrollView.init(frame: CGRectMake(0, 100, self.screenWidth, 300))
         self.view.addSubview(imageScrollView)
     }
 
@@ -23,6 +24,8 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-
+    deinit{
+        print("释放")
+    }
 }
 
