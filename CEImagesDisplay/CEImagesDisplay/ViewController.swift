@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     let screenWidth = UIScreen.mainScreen().bounds.width
+    let screenHeight = UIScreen.mainScreen().bounds.height
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +20,7 @@ class ViewController: UIViewController {
     }
     
     func addImageDisplayView() {
-        let imageScrollView: CEImagesDisplayView = CEImagesDisplayView.init(frame: CGRectMake(0, 100, self.screenWidth, 300))
+        let imageScrollView: CEImagesDisplayView = CEImagesDisplayView.init(frame: CGRectMake(0,80, self.screenWidth, 260))
         self.view.addSubview(imageScrollView)
         
         imageScrollView.setImages(initImagesNameArray())
