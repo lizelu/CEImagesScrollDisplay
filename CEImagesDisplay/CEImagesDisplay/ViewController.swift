@@ -31,9 +31,11 @@ class ViewController: UIViewController {
     func initImagesNameArray() -> Array<AnyObject>{
         var imagesNameArray: Array<AnyObject> = []
         //添加本地图片
-//        for i in 0..<6 {
-//            imagesNameArray.append("00\(i).jpg")
-//        }
+        for i in 0..<9 {
+            imagesNameArray.append("00\(i).jpg")
+        }
+        
+        imagesNameArray.append(UIImage(named: "009.jpg")!)
         
         //添加网络图片
 
