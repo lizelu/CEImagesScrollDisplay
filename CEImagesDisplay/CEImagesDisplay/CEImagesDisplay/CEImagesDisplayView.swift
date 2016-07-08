@@ -301,6 +301,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
             }
             
             dispatch_async(dispatch_get_main_queue(), {
+                print(index)
                 self.imagesNameArray[index] = image
                 self.moveImageView(self.scrollView.contentOffset.x)
             })
