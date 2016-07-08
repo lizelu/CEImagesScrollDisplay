@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--First View Controller-->
         <scene sceneID="Ec5-Nl-fD9">
             <objects>
-                <viewController id="pAJ-X7-o9f" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FirstViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="pAJ-X7-o9f" customClass="FirstViewController" customModule="CEImagesDisplay" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="LQq-xr-Omq"/>
                         <viewControllerLayoutGuide type="bottom" id="r2Z-gp-snh"/>
@@ -24,14 +24,20 @@
                                     <segue destination="BYZ-38-t0r" kind="show" id="YNL-xs-Ah9"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LBy-mC-pol">
+                                <rect key="frame" x="20" y="227" width="306" height="165"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="6QU-p6-eGV"/>
+                    <connections>
+                        <outlet property="testImageView" destination="LBy-mC-pol" id="fST-D6-cFu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TlJ-MO-L5E" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="176" y="361"/>
+            <point key="canvasLocation" x="107" y="322"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -49,7 +55,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="805" y="377"/>
+            <point key="canvasLocation" x="625" y="344"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="EyN-Jl-lfY">

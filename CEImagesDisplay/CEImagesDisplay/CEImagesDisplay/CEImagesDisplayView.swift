@@ -124,7 +124,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         for i in 0..<self.buttonsArray.count {
             let tempButton = self.buttonsArray[i]
             let imageName = self.imagesNameArray[imageIndexArray[i]]
-            tempButton.buttonImageView.image = UIImage.init(named: imageName)
+            tempButton.addImageToImageView(imageName)
         }
     }
     

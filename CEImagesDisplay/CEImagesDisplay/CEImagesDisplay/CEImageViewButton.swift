@@ -11,7 +11,7 @@ import UIKit
 typealias ButtonTouchUpInsideClosure = (UIButton) -> Void
 
 class CEImageViewButton: UIButton {
-    var buttonImageView: UIImageView!
+    private var buttonImageView: UIImageView!
     private var touchUpInsideClosure: ButtonTouchUpInsideClosure!
     
     override init(frame: CGRect) {
@@ -24,7 +24,15 @@ class CEImageViewButton: UIButton {
         self.touchUpInsideClosure = closure
     }
     
-    
+    func addImageToImageView (name: String) {
+        guard let image = UIImage(named: name) else {
+            return
+        }
+        
+        self.buttonImageView.image = image
+        
+        print(self.isURLString("http://www.baidu.com/211.png"))
+    }
     private func configButton() {
         self.addTarget(self, action: #selector(tapButton), forControlEvents: .TouchUpInside)
         self.clipsToBounds = true
@@ -40,6 +48,12 @@ class CEImageViewButton: UIButton {
         if self.touchUpInsideClosure != nil {
             self.touchUpInsideClosure(sender)
         }
+    }
+    
+    private func isURLString(imageName: String) -> Bool {
+        let pattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?"
+        let predicate: NSPredicate = NSPredicate(format: "SELF MATCHES %@", pattern)
+        return predicate.evaluateWithObject(imageName)
     }
     
     required init?(coder aDecoder: NSCoder) {
