@@ -31,7 +31,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     private var isSourceActive: Bool = false                    //定时器是否有效
     private var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!    //按钮点击事件回调
     private var duration: Float = 5                             //运动时间间隔
-    private let serialQueue: dispatch_queue_t = dispatch_queue_create("serialQueue", DISPATCH_QUEUE_SERIAL)
+    private let queue: dispatch_queue_t = dispatch_queue_create("queue", DISPATCH_QUEUE_CONCURRENT)
     
     private var pageControl: UIPageControl!
     private var pageControlHeight: CGFloat = 50
@@ -66,6 +66,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
+    
     private func requstAllImage(imageArray: Array<AnyObject>) {
         for i in 0..<imageArray.count {
             let imageName = imageArray[i]
@@ -75,7 +76,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
             }
             
             if isURLString(imageNameString) {
-               dispatch_async(serialQueue, {
+               dispatch_async(queue, {
                     self.requestImage(imageNameString, index: i)
                })
             }
@@ -146,19 +147,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         for i in 0..<self.buttonsArray.count {
             let tempButton = self.buttonsArray[i]
             let imageName = self.imagesNameArray[imageIndexArray[i]]
-            tempButton.addImageToImageView(imageName)
-        }
-    }
-    
-    
-    private func setButtonSameImage(currentPage: Int) {
-        
-        let imageIndex = getCurrentImageIndex(currentPage)
-        
-        
-        for i in 0..<self.buttonsArray.count {
-            let tempButton = self.buttonsArray[i]
-            let imageName = self.imagesNameArray[imageIndex]
             tempButton.addImageToImageView(imageName)
         }
     }
@@ -276,12 +264,10 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         if temp == 0 || temp == 1 || temp == 2 {
             let position: Int = Int(temp) - 1
             self.currentPage = getCurrentImageIndex(self.currentPage + position)
-            self.setButtonSameImage(self.currentPage)
             self.scrollView.contentOffset.x = self.width
             self.setButtonImage(self.currentPage)
             self.pageControl?.currentPage = self.currentPage
         }
-
     }
     
 
