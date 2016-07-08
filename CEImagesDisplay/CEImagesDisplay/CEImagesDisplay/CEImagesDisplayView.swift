@@ -24,13 +24,14 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
-    private var imagesNameArray: Array<String> = []             //图片数组
+    private var imagesNameArray: Array<AnyObject> = []             //图片数组
     private var buttonsArray: Array<CEImageViewButton> = []     //存储三个按钮
     private var currentPage: Int = 0                            //当前页数
     private var direction:CGFloat = 1                           //运动方向，1 <==> right, -1 <==> left
     private var isSourceActive: Bool = false                    //定时器是否有效
     private var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!    //按钮点击事件回调
     private var duration: Float = 5                             //运动时间间隔
+    private let serialQueue: dispatch_queue_t = dispatch_queue_create("serialQueue", DISPATCH_QUEUE_SERIAL)
     
     private var pageControl: UIPageControl!
     private var pageControlHeight: CGFloat = 50
@@ -51,12 +52,33 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         self.touchUpInsideClosure = closure
     }
     
-    func setImages(imagesNameArray: Array<String>) {
+    func setImages(imagesNameArray: Array<AnyObject>) {
         self.imagesNameArray = imagesNameArray
+        self.requstAllImage(imagesNameArray)
+        self.addImagesToButton(imagesNameArray)
+    }
+    
+    func addImagesToButton(imagesNameArray: Array<AnyObject>) {
         if imagesNameArray.count > 0 {
             self.setButtonImage(self.currentPage)
             self.pageControl.numberOfPages = imagesNameArray.count
             self.currentPage = 0;
+        }
+    }
+    
+    private func requstAllImage(imageArray: Array<AnyObject>) {
+        for i in 0..<imageArray.count {
+            let imageName = imageArray[i]
+            
+            guard let imageNameString = imageName as? String else {
+                continue
+            }
+            
+            if isURLString(imageNameString) {
+               dispatch_async(serialQueue, {
+                    self.requestImage(imageNameString, index: i)
+               })
+            }
         }
     }
     
@@ -124,6 +146,19 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         for i in 0..<self.buttonsArray.count {
             let tempButton = self.buttonsArray[i]
             let imageName = self.imagesNameArray[imageIndexArray[i]]
+            tempButton.addImageToImageView(imageName)
+        }
+    }
+    
+    
+    private func setButtonSameImage(currentPage: Int) {
+        
+        let imageIndex = getCurrentImageIndex(currentPage)
+        
+        
+        for i in 0..<self.buttonsArray.count {
+            let tempButton = self.buttonsArray[i]
+            let imageName = self.imagesNameArray[imageIndex]
             tempButton.addImageToImageView(imageName)
         }
     }
@@ -241,12 +276,65 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         if temp == 0 || temp == 1 || temp == 2 {
             let position: Int = Int(temp) - 1
             self.currentPage = getCurrentImageIndex(self.currentPage + position)
+            self.setButtonSameImage(self.currentPage)
             self.scrollView.contentOffset.x = self.width
             self.setButtonImage(self.currentPage)
             self.pageControl?.currentPage = self.currentPage
         }
 
     }
+    
+
+    /**
+     从网络加载图片
+     
+     - parameter imageURLString: imageURL
+     - parameter index:          图片索引
+     */
+    private func requestImage(imageURLString: String, index: Int) {
+        guard let imageURL: NSURL = NSURL.init(string: imageURLString) else {
+            return
+        }
+        
+        let request: NSMutableURLRequest = NSMutableURLRequest.init(URL: imageURL)
+        request.cachePolicy = .UseProtocolCachePolicy
+        
+        let session: NSURLSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
+        let sessionDataTask: NSURLSessionDataTask = session.dataTaskWithRequest(request) { (data, respons, error) in
+            if error != nil {
+                print(error?.description)
+                return
+            }
+            
+            guard let imageData = data else {
+                return
+            }
+            
+            guard let image: UIImage = UIImage.init(data: imageData) else {
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                self.imagesNameArray[index] = image
+                self.moveImageView(self.scrollView.contentOffset.x)
+            })
+        }
+        sessionDataTask.resume()
+    }
+
+    /**
+     图片URL实现
+     
+     - parameter imageName: <#imageName description#>
+     
+     - returns: <#return value description#>
+     */
+    private func isURLString(imageName: String) -> Bool {
+        let pattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?"
+        let predicate: NSPredicate = NSPredicate(format: "SELF MATCHES %@", pattern)
+        return predicate.evaluateWithObject(imageName)
+    }
+
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

@@ -28,12 +28,27 @@ class ViewController: UIViewController {
         }
     }
     
-    func initImagesNameArray() -> Array<String>{
-        var imagesNameArray: Array<String> = []
-        for i in 0..<10 {
+    func initImagesNameArray() -> Array<AnyObject>{
+        var imagesNameArray: Array<AnyObject> = []
+        //添加本地图片
+        for i in 0..<9 {
             imagesNameArray.append("00\(i).jpg")
         }
+        
+        //添加图片对象
+        if let image = UIImage(named:"009.jgp"){
+            imagesNameArray.append(image)
+        }
+        
+        //添加网络图片
         imagesNameArray.append("http://pic72.nipic.com/file/20150716/21422793_144600530000_2.jpg")
+        imagesNameArray.append("http://img2.3lian.com/img2007/4/22/303952037bk.jpg")
+        imagesNameArray.append("http://img.61gequ.com/allimg/2011-4/201142614314278502.jpg")
+        imagesNameArray.append("http://img4.imgtn.bdimg.com/it/u=3673450456,2434143346&fm=21&gp=0.jpg")
+        imagesNameArray.append("http://pic72.nipic.com/file/20150716/21422793_144600530000_2.jpg")
+        imagesNameArray.append("http://img2.3lian.com/img2007/4/22/303952037bk.jpg")
+        imagesNameArray.append("http://img.61gequ.com/allimg/2011-4/201142614314278502.jpg")
+        
         return imagesNameArray
     }
 

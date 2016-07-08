@@ -13,10 +13,6 @@ class FirstViewController: UIViewController {
     @IBOutlet var testImageView: UIImageView!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let imageURLString = "http://pic72.nipic.com/file/20150716/21422793_144600530000_2.jpg"
-        testImageView.ce_setImage(imageURLString)
-        print(NSHomeDirectory())
     }
 
     override func didReceiveMemoryWarning() {

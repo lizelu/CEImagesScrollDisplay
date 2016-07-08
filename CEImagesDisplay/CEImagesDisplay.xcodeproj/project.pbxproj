@@ -40,7 +40,6 @@
 		F4EEE2CE1D2D0D2600ABFE51 /* 009.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F4EEE2C31D2D0D2600ABFE51 /* 009.jpg */; };
 		F4EEE2D21D2D150C00ABFE51 /* CEImagesDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2D11D2D150C00ABFE51 /* CEImagesDisplayView.swift */; };
 		F4EEE2D41D2DE56100ABFE51 /* CEImageViewButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2D31D2DE56100ABFE51 /* CEImageViewButton.swift */; };
-		F4EEE2D61D2F3D2900ABFE51 /* CEImageViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2D51D2F3D2900ABFE51 /* CEImageViewExtension.swift */; };
 		F4EEE2D81D2F3F1100ABFE51 /* place_image.png in Resources */ = {isa = PBXBuildFile; fileRef = F4EEE2D71D2F3F1000ABFE51 /* place_image.png */; };
 		F4EEE2DA1D2F441F00ABFE51 /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2D91D2F441F00ABFE51 /* FirstViewController.swift */; };
 /* End PBXBuildFile section */
@@ -102,7 +101,6 @@
 		F4EEE2C31D2D0D2600ABFE51 /* 009.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 009.jpg; sourceTree = "<group>"; };
 		F4EEE2D11D2D150C00ABFE51 /* CEImagesDisplayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEImagesDisplayView.swift; sourceTree = "<group>"; };
 		F4EEE2D31D2DE56100ABFE51 /* CEImageViewButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEImageViewButton.swift; sourceTree = "<group>"; };
-		F4EEE2D51D2F3D2900ABFE51 /* CEImageViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CEImageViewExtension.swift; sourceTree = "<group>"; };
 		F4EEE2D71D2F3F1000ABFE51 /* place_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = place_image.png; sourceTree = "<group>"; };
 		F4EEE2D91D2F441F00ABFE51 /* FirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -218,7 +216,6 @@
 				F4EEE2D71D2F3F1000ABFE51 /* place_image.png */,
 				F4EEE2D11D2D150C00ABFE51 /* CEImagesDisplayView.swift */,
 				F4EEE2D31D2DE56100ABFE51 /* CEImageViewButton.swift */,
-				F4EEE2D51D2F3D2900ABFE51 /* CEImageViewExtension.swift */,
 			);
 			path = CEImagesDisplay;
 			sourceTree = "<group>";
@@ -305,7 +302,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4EEE2D61D2F3D2900ABFE51 /* CEImageViewExtension.swift in Sources */,
 				F4E249971D2F654B009935EE /* SDWebImageManager.m in Sources */,
 				F4E249921D2F654B009935EE /* SDImageCache.m in Sources */,
 				F4E249961D2F654B009935EE /* SDWebImageDownloaderOperation.m in Sources */,

@@ -28,17 +28,23 @@ class CEImageViewButton: UIButton {
         self.touchUpInsideClosure = closure
     }
     
-    func addImageToImageView (name: String) {
-
-        
-        if isURLString(name) {
-            self.buttonImageView.sd_setImageWithURL(NSURL(string: name), placeholderImage: UIImage(named: "place_image"))
-        } else {
-            guard let image = UIImage(named: name) else {
+    func addImageToImageView (name: AnyObject) {
+        guard var imageNameString = name as? String else {
+            guard let image = name as? UIImage else {
                 return
             }
             self.buttonImageView.image = image
+            return
         }
+        
+        if isURLString(imageNameString) {
+            imageNameString = "place_image"
+        }
+        
+        guard let image = UIImage(named: imageNameString) else {
+            return
+        }
+        self.buttonImageView.image = image
     }
     private func configButton() {
         self.addTarget(self, action: #selector(tapButton), forControlEvents: .TouchUpInside)
@@ -62,7 +68,7 @@ class CEImageViewButton: UIButton {
         let predicate: NSPredicate = NSPredicate(format: "SELF MATCHES %@", pattern)
         return predicate.evaluateWithObject(imageName)
     }
-
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
