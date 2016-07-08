@@ -33,6 +33,7 @@ class ViewController: UIViewController {
         for i in 0..<10 {
             imagesNameArray.append("00\(i).jpg")
         }
+        imagesNameArray.append("http://pic72.nipic.com/file/20150716/21422793_144600530000_2.jpg")
         return imagesNameArray
     }
 

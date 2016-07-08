@@ -10,7 +10,11 @@ import UIKit
 
 typealias ButtonTouchUpInsideClosure = (UIButton) -> Void
 
+
+
+
 class CEImageViewButton: UIButton {
+    private static var requstImageDic: Dictionary<String, UIImage> = [:]
     private var buttonImageView: UIImageView!
     private var touchUpInsideClosure: ButtonTouchUpInsideClosure!
     
@@ -25,13 +29,16 @@ class CEImageViewButton: UIButton {
     }
     
     func addImageToImageView (name: String) {
-        guard let image = UIImage(named: name) else {
-            return
+
+        
+        if isURLString(name) {
+            self.buttonImageView.sd_setImageWithURL(NSURL(string: name), placeholderImage: UIImage(named: "place_image"))
+        } else {
+            guard let image = UIImage(named: name) else {
+                return
+            }
+            self.buttonImageView.image = image
         }
-        
-        self.buttonImageView.image = image
-        
-        print(self.isURLString("http://www.baidu.com/211.png"))
     }
     private func configButton() {
         self.addTarget(self, action: #selector(tapButton), forControlEvents: .TouchUpInside)
@@ -55,6 +62,7 @@ class CEImageViewButton: UIButton {
         let predicate: NSPredicate = NSPredicate(format: "SELF MATCHES %@", pattern)
         return predicate.evaluateWithObject(imageName)
     }
+
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
