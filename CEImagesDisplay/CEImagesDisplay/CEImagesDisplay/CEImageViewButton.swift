@@ -10,9 +10,6 @@ import UIKit
 
 typealias ButtonTouchUpInsideClosure = (UIButton) -> Void
 
-
-
-
 class CEImageViewButton: UIButton {
     private static var requstImageDic: Dictionary<String, UIImage> = [:]
     private var buttonImageView: UIImageView!

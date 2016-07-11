@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F4E249A51D337071009935EE /* Reveal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4E249A41D337071009935EE /* Reveal.framework */; };
+		F4E249A71D3370FD009935EE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F4E249A61D3370FD009935EE /* libz.tbd */; };
 		F4EEE2A31D2D08D800ABFE51 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2A21D2D08D800ABFE51 /* AppDelegate.swift */; };
 		F4EEE2A51D2D08D800ABFE51 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EEE2A41D2D08D800ABFE51 /* ViewController.swift */; };
 		F4EEE2A81D2D08D800ABFE51 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F4EEE2A61D2D08D800ABFE51 /* Main.storyboard */; };
@@ -30,6 +32,8 @@
 
 /* Begin PBXFileReference section */
 		F4E249A31D2F6694009935EE /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
+		F4E249A41D337071009935EE /* Reveal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Reveal.framework; sourceTree = "<group>"; };
+		F4E249A61D3370FD009935EE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		F4EEE29F1D2D08D800ABFE51 /* CEImagesDisplay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CEImagesDisplay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4EEE2A21D2D08D800ABFE51 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F4EEE2A41D2D08D800ABFE51 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -58,6 +62,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F4E249A71D3370FD009935EE /* libz.tbd in Frameworks */,
+				F4E249A51D337071009935EE /* Reveal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,6 +73,8 @@
 		F4EEE2961D2D08D800ABFE51 = {
 			isa = PBXGroup;
 			children = (
+				F4E249A61D3370FD009935EE /* libz.tbd */,
+				F4E249A41D337071009935EE /* Reveal.framework */,
 				F4EEE2A11D2D08D800ABFE51 /* CEImagesDisplay */,
 				F4EEE2A01D2D08D800ABFE51 /* Products */,
 			);
@@ -323,9 +331,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = CEImagesDisplay/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ZeluLi.CEImagesDisplay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/CEImagesDisplay/BridgingHeader.h";
@@ -336,9 +349,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = CEImagesDisplay/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = ZeluLi.CEImagesDisplay;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/CEImagesDisplay/BridgingHeader.h";

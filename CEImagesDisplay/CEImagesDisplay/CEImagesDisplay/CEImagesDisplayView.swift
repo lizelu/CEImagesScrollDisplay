@@ -292,11 +292,8 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
                 return
             }
             
-            guard let imageData = data else {
-                return
-            }
-            
-            guard let image: UIImage = UIImage.init(data: imageData) else {
+            guard let imageData = data,
+            let image: UIImage = UIImage.init(data: imageData) else {
                 return
             }
             
