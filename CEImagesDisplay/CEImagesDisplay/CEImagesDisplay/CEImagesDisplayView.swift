@@ -120,7 +120,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         let timer = UInt64(duration) * NSEC_PER_SEC
         dispatch_source_set_timer(source, dispatch_time(DISPATCH_TIME_NOW,  Int64(timer)), timer, 0)
         dispatch_source_set_event_handler(source) {
-            
             UIView.animateWithDuration(0.3, animations: {
                 self.scrollView.contentOffset.x = self.scrollView.contentOffset.x + (self.width * self.direction)  - 1
                 }, completion: { (result) in
@@ -246,7 +245,6 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      - parameter scrollView:
      */
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-
         if !self.isSourceActive && dispatch_source_get_handle(source) != 0 {
             dispatch_resume(source)
             self.isSourceActive = true
