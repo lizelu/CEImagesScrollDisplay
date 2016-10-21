@@ -11,9 +11,9 @@ import UIKit
 typealias ButtonTouchUpInsideClosure = (UIButton) -> Void
 
 class CEImageViewButton: UIButton {
-    private static var requstImageDic: Dictionary<String, UIImage> = [:]
-    private var buttonImageView: UIImageView!
-    private var touchUpInsideClosure: ButtonTouchUpInsideClosure!
+    fileprivate static var requstImageDic: Dictionary<String, UIImage> = [:]
+    fileprivate var buttonImageView: UIImageView!
+    fileprivate var touchUpInsideClosure: ButtonTouchUpInsideClosure!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -21,11 +21,11 @@ class CEImageViewButton: UIButton {
         self.addButtonImageView()
     }
     
-    func setButtonTouchUpInsideClosure(closure: ButtonTouchUpInsideClosure) {
+    func setButtonTouchUpInsideClosure(_ closure: @escaping ButtonTouchUpInsideClosure) {
         self.touchUpInsideClosure = closure
     }
     
-    func addImageToImageView (name: AnyObject) {
+    func addImageToImageView (_ name: AnyObject) {
         guard var imageNameString = name as? String else {
             guard let image = name as? UIImage else {
                 return
@@ -43,27 +43,27 @@ class CEImageViewButton: UIButton {
         }
         self.buttonImageView.image = image
     }
-    private func configButton() {
-        self.addTarget(self, action: #selector(tapButton), forControlEvents: .TouchUpInside)
+    fileprivate func configButton() {
+        self.addTarget(self, action: #selector(tapButton), for: .touchUpInside)
         self.clipsToBounds = true
     }
     
-    private func addButtonImageView() {
-        self.buttonImageView = UIImageView.init(frame: CGRectMake(0, 0, self.frame.size.width, self.frame.size.height))
-        self.buttonImageView.contentMode = .ScaleAspectFill
+    fileprivate func addButtonImageView() {
+        self.buttonImageView = UIImageView.init(frame: CGRect(x: 0, y: 0, width: self.frame.size.width, height: self.frame.size.height))
+        self.buttonImageView.contentMode = .scaleAspectFill
         self.addSubview(self.buttonImageView)
     }
     
-    @objc private func tapButton(sender: UIButton) {
+    @objc fileprivate func tapButton(_ sender: UIButton) {
         if self.touchUpInsideClosure != nil {
             self.touchUpInsideClosure(sender)
         }
     }
     
-    private func isURLString(imageName: String) -> Bool {
+    fileprivate func isURLString(_ imageName: String) -> Bool {
         let pattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?"
         let predicate: NSPredicate = NSPredicate(format: "SELF MATCHES %@", pattern)
-        return predicate.evaluateWithObject(imageName)
+        return predicate.evaluate(with: imageName)
     }
     
     

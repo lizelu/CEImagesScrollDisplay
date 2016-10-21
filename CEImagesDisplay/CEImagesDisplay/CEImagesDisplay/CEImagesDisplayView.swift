@@ -12,32 +12,32 @@ typealias ButtonTouchUpInsideClosureTag = (Int) -> Void
 
 class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     
-    private var width: CGFloat {
+    fileprivate var width: CGFloat {
         get {
             return self.frame.size.width
         }
     }
     
-    private var height: CGFloat {
+    fileprivate var height: CGFloat {
         get {
             return self.frame.size.height
         }
     }
     
-    private var imagesNameArray: Array<AnyObject> = []             //图片数组
-    private var buttonsArray: Array<CEImageViewButton> = []     //存储三个按钮
-    private var currentPage: Int = 0                            //当前页数
-    private var direction:CGFloat = 1                           //运动方向，1 <==> right, -1 <==> left
-    private var isSourceActive: Bool = false                    //定时器是否有效
-    private var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!    //按钮点击事件回调
-    private var duration: Float = 5                             //运动时间间隔
-    private let queue: dispatch_queue_t = dispatch_queue_create("queue", DISPATCH_QUEUE_CONCURRENT)
+    fileprivate var imagesNameArray: Array<AnyObject> = []             //图片数组
+    fileprivate var buttonsArray: Array<CEImageViewButton> = []     //存储三个按钮
+    fileprivate var currentPage: Int = 0                            //当前页数
+    fileprivate var direction:CGFloat = 1                           //运动方向，1 <==> right, -1 <==> left
+    fileprivate var isSourceActive: Bool = false                    //定时器是否有效
+    fileprivate var touchUpInsideClosure: ButtonTouchUpInsideClosureTag!    //按钮点击事件回调
+    fileprivate var duration: Float = 5                             //运动时间间隔
+    fileprivate let queue: DispatchQueue = DispatchQueue(label: "queue", attributes: DispatchQueue.Attributes.concurrent)
     
-    private var pageControl: UIPageControl!
-    private var pageControlHeight: CGFloat = 50
-    private var scrollView: UIScrollView!
+    fileprivate var pageControl: UIPageControl!
+    fileprivate var pageControlHeight: CGFloat = 50
+    fileprivate var scrollView: UIScrollView!
     
-    let source: dispatch_source_t = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue())
+    let source: DispatchSourceTimer = DispatchSource.makeTimerSource(flags: DispatchSource.TimerFlags(rawValue: UInt(0)), queue: DispatchQueue.main) as! DispatchSource
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,17 +48,17 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     }
     
     
-    func setButtonTouchUpInsideClosure(closure: ButtonTouchUpInsideClosureTag) {
+    func setButtonTouchUpInsideClosure(_ closure: @escaping ButtonTouchUpInsideClosureTag) {
         self.touchUpInsideClosure = closure
     }
     
-    func setImages(imagesNameArray: Array<AnyObject>) {
+    func setImages(_ imagesNameArray: Array<AnyObject>) {
         self.imagesNameArray = imagesNameArray
         self.requstAllImage(imagesNameArray)
         self.addImagesToButton(imagesNameArray)
     }
     
-    func addImagesToButton(imagesNameArray: Array<AnyObject>) {
+    func addImagesToButton(_ imagesNameArray: Array<AnyObject>) {
         if imagesNameArray.count > 0 {
             self.setButtonImage(self.currentPage)
             self.pageControl.numberOfPages = imagesNameArray.count
@@ -67,7 +67,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
     }
     
     
-    private func requstAllImage(imageArray: Array<AnyObject>) {
+    fileprivate func requstAllImage(_ imageArray: Array<AnyObject>) {
         for i in 0..<imageArray.count {
             let imageName = imageArray[i]
             
@@ -76,27 +76,27 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
             }
             
             if isURLString(imageNameString) {
-               dispatch_async(queue, {
+               queue.async(execute: {
                     self.requestImage(imageNameString, index: i)
                })
             }
         }
     }
     
-    private func configScrollView() {
-        self.scrollView = UIScrollView.init(frame: CGRectMake(0, 0, self.width, self.height))
+    fileprivate func configScrollView() {
+        self.scrollView = UIScrollView.init(frame: CGRect(x: 0, y: 0, width: self.width, height: self.height))
         self.scrollView.bounces = false
         self.scrollView.delegate = self
         self.scrollView.showsVerticalScrollIndicator = false
         self.scrollView.showsHorizontalScrollIndicator = false
-        self.scrollView.backgroundColor = UIColor.grayColor()
-        self.scrollView.contentSize = CGSizeMake(3 * self.width, self.height)
-        self.scrollView.pagingEnabled = true
+        self.scrollView.backgroundColor = UIColor.gray
+        self.scrollView.contentSize = CGSize(width: 3 * self.width, height: self.height)
+        self.scrollView.isPagingEnabled = true
         self.scrollView.contentOffset.x = self.width
         self.addSubview(self.scrollView)
     }
     
-    private func initButtons() {
+    fileprivate func initButtons() {
         for i in 0..<3 {
             let tempButton: CEImageViewButton = CEImageViewButton.init(frame: getButtonFrameWithIndex(i))
             tempButton.tag = i
@@ -109,18 +109,19 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
         }
     }
     
-    private func initPageControl() {
-        self.pageControl = UIPageControl(frame: CGRectMake(0, self.height - pageControlHeight, self.width, pageControlHeight))
+    fileprivate func initPageControl() {
+        self.pageControl = UIPageControl(frame: CGRect(x: 0, y: self.height - pageControlHeight, width: self.width, height: pageControlHeight))
         self.addSubview(self.pageControl)
-        self.pageControl.pageIndicatorTintColor = UIColor.whiteColor()
-        self.pageControl.currentPageIndicatorTintColor = UIColor.blackColor()
+        self.pageControl.pageIndicatorTintColor = UIColor.white
+        self.pageControl.currentPageIndicatorTintColor = UIColor.black
     }
     
-    private func addDispatchSourceTimer() {
+    fileprivate func addDispatchSourceTimer() {
         let timer = UInt64(duration) * NSEC_PER_SEC
-        dispatch_source_set_timer(source, dispatch_time(DISPATCH_TIME_NOW,  Int64(timer)), timer, 0)
-        dispatch_source_set_event_handler(source) {
-            UIView.animateWithDuration(0.3, animations: {
+        source.scheduleRepeating(deadline: DispatchTime.init(uptimeNanoseconds: UInt64(timer)), interval: DispatchTimeInterval.seconds(Int(duration)), leeway: DispatchTimeInterval.seconds(0))
+        //source.setTimer(start: DispatchTime.now() + Double(Int64(timer)) / Double(NSEC_PER_SEC), interval: timer, leeway: 0)
+        source.setEventHandler {
+            UIView.animate(withDuration: 0.3, animations: {
                 self.scrollView.contentOffset.x = self.scrollView.contentOffset.x + (self.width * self.direction)  - 1
                 }, completion: { (result) in
                     if result {
@@ -128,7 +129,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
                     }
             })
         }
-        dispatch_resume(source)
+        source.resume()
         self.isSourceActive = true
     }
 
@@ -137,7 +138,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - parameter currentPage: 当前页数
      */
-    private func setButtonImage(currentPage: Int) {
+    fileprivate func setButtonImage(_ currentPage: Int) {
         
         let imageIndexArray = [getBeforeImageIndex(currentPage),
                                getCurrentImageIndex(currentPage),
@@ -158,7 +159,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - returns:
      */
-    private func getCurrentImageIndex(currentPage: Int) -> Int {
+    fileprivate func getCurrentImageIndex(_ currentPage: Int) -> Int {
         if self.imagesNameArray.count > 0 {
             let tempCurrentPage = currentPage % self.imagesNameArray.count
             return tempCurrentPage < 0 ? self.imagesNameArray.count - 1 : tempCurrentPage
@@ -173,7 +174,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - returns:
      */
-    private func getBeforeImageIndex(currentPage: Int) -> Int {
+    fileprivate func getBeforeImageIndex(_ currentPage: Int) -> Int {
         let beforeNumber = getCurrentImageIndex(currentPage) - 1
         return beforeNumber < 0 ? self.imagesNameArray.count - 1 : beforeNumber
     }
@@ -185,7 +186,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - returns:
      */
-    private func getLastImageIndex(currentPage: Int) -> Int {
+    fileprivate func getLastImageIndex(_ currentPage: Int) -> Int {
         let lastNumber = getCurrentImageIndex(currentPage) + 1
         return lastNumber >= self.imagesNameArray.count ? 0 : lastNumber
     }
@@ -197,8 +198,8 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - returns:
      */
-    private func getButtonFrameWithIndex(index: Int) -> CGRect{
-        return CGRectMake(CGFloat(index) * self.width, 0, self.width, self.height)
+    fileprivate func getButtonFrameWithIndex(_ index: Int) -> CGRect{
+        return CGRect(x: CGFloat(index) * self.width, y: 0, width: self.width, height: self.height)
     }
     
     
@@ -209,7 +210,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - parameter scrollView:
      */
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.moveImageView(scrollView.contentOffset.x)
     }
     
@@ -219,7 +220,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      - parameter scrollView:
      - parameter decelerate:
      */
-    func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if scrollView.contentOffset.x - self.width > 0 {
             direction = 1
         } else {
@@ -232,9 +233,9 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - parameter scrollView:
      */
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         if self.isSourceActive {
-            dispatch_suspend(source)
+            source.suspend()
             self.isSourceActive = false
         }
     }
@@ -244,9 +245,9 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - parameter scrollView:
      */
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        if !self.isSourceActive && dispatch_source_get_handle(source) != 0 {
-            dispatch_resume(source)
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if !self.isSourceActive && source.handle != 0 {
+            source.resume()
             self.isSourceActive = true
         }
     }
@@ -256,7 +257,7 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - parameter offsetX:
      */
-    func moveImageView(offsetX: CGFloat) {
+    func moveImageView(_ offsetX: CGFloat) {
         let temp = offsetX / self.width
         
         if temp == 0 || temp == 1 || temp == 2 {
@@ -275,32 +276,35 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      - parameter imageURLString: imageURL
      - parameter index:          图片索引
      */
-    private func requestImage(imageURLString: String, index: Int) {
-        guard let imageURL: NSURL = NSURL.init(string: imageURLString) else {
+    fileprivate func requestImage(_ imageURLString: String, index: Int) {
+        guard let imageURL: URL = URL.init(string: imageURLString) else {
             return
         }
         
-        let request: NSMutableURLRequest = NSMutableURLRequest.init(URL: imageURL)
-        request.cachePolicy = .UseProtocolCachePolicy
+        let request: NSMutableURLRequest = NSMutableURLRequest.init(url: imageURL)
+        request.cachePolicy = .useProtocolCachePolicy
         
-        let session: NSURLSession = NSURLSession(configuration: NSURLSessionConfiguration.defaultSessionConfiguration())
-        let sessionDataTask: NSURLSessionDataTask = session.dataTaskWithRequest(request) { (data, respons, error) in
+        let session: URLSession = URLSession(configuration: URLSessionConfiguration.default)
+        
+        let sessionDataTask: URLSessionDataTask = session.dataTask(with: imageURL) { (data, respons, error) in
             if error != nil {
-                print(error?.description)
+                print(error)
                 return
             }
             
             guard let imageData = data,
-            let image: UIImage = UIImage.init(data: imageData) else {
-                return
+                let image: UIImage = UIImage.init(data: imageData) else {
+                    return
             }
             
-            dispatch_async(dispatch_get_main_queue(), {
+            DispatchQueue.main.async(execute: {
                 print(index)
                 self.imagesNameArray[index] = image
                 self.moveImageView(self.scrollView.contentOffset.x)
             })
+
         }
+        
         sessionDataTask.resume()
     }
 
@@ -311,10 +315,10 @@ class CEImagesDisplayView: UIView, UIScrollViewDelegate {
      
      - returns: <#return value description#>
      */
-    private func isURLString(imageName: String) -> Bool {
+    fileprivate func isURLString(_ imageName: String) -> Bool {
         let pattern = "((http|ftp|https)://)(([a-zA-Z0-9\\._-]+\\.[a-zA-Z]{2,6})|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\\&%_\\./-~-]*)?"
         let predicate: NSPredicate = NSPredicate(format: "SELF MATCHES %@", pattern)
-        return predicate.evaluateWithObject(imageName)
+        return predicate.evaluate(with: imageName)
     }
 
     
